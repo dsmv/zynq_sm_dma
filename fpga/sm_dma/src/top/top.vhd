@@ -75,8 +75,8 @@ architecture top of top is
 signal	clk		    					: std_logic;    
 signal	reset_n			    			: std_logic;    
 signal	irq_f2p							: std_logic_vector( 0 downto 0 );
-signal  m_axi_gp0_s         			: s_axi_type;
-signal  m_axi_gp0_m         			: m_axi_type;
+signal  gp0_axi_s         			: s_axi_type;
+signal  gp0_axi_m         			: m_axi_type;
 signal  hp0_axi_m	        			: m_axi_type;
 signal  hp0_axi_s   	    			: s_axi_type;
 signal  hp2_axi_m           			: m_axi_type;
@@ -103,7 +103,7 @@ zynq: zynq_system
 		is_simulation => is_simulation
 	)
 	port map(
-	    --- Âíåùíèå ñèãíàëû ---
+	
         DDR_addr            => DDR_addr,
         DDR_ba              => DDR_ba,
         DDR_cas_n           => DDR_cas_n,
@@ -126,20 +126,16 @@ zynq: zynq_system
         FIXED_IO_ps_porb    => FIXED_IO_ps_porb,
         FIXED_IO_ps_srstb   => FIXED_IO_ps_srstb,
 	
-		aclk_out		    => clk,    		-- òàêòîâàÿ ÷àñòîòà øèíû
-		reset_n			    => reset_n,    	-- 0 - ñáğîñ 
+		aclk_out		    => clk,    		
+		reset_n			    => reset_n,    	
 		
-		IRQ_F2P				=> irq_f2p,
+		irq_f2p				=> irq_f2p,
 
-		--- Äîñòóï îò ïğîöåññîğà ê ïåğèôåğèéíûì óñòğîéñòâàì ---
-        M_AXI_GP0_IN         => m_axi_gp0_s,
-        M_AXI_GP0_OUT        => m_axi_gp0_m,
+        gp0_axi_s         	=> gp0_axi_s,
+        gp0_axi_m        	=> gp0_axi_m,
 
-        --- Äîñòóï ê DDR ïàìÿòè ïğîöåññîğà ---
-        HP0_AXI_IN          => hp0_axi_m,
-        HP0_AXI_OUT         => hp0_axi_s,
-        HP2_AXI_IN          => hp2_axi_m,
-        HP2_AXI_OUT         => hp2_axi_s 
+        hp0_axi_m          	=> hp0_axi_m,
+        hp0_axi_s         	=> hp0_axi_s
 
  
 );							 
@@ -157,8 +153,8 @@ host: entity work.sm_dma
 		clk							=> clk,		
 		reset						=> reset_n,
 	                            	
-		s00_axi_m					=> m_axi_gp0_m,
-		s00_axi_s					=> m_axi_gp0_s,	
+		s00_axi_m					=> gp0_axi_m,
+		s00_axi_s					=> gp0_axi_s,	
 		                        	
 		reset_o						=> user_reset_n,
 

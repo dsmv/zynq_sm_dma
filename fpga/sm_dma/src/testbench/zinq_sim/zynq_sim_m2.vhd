@@ -46,10 +46,10 @@ component zynq_sim_m2 is
         m_axi_gp0_m         	: out  m_axi_type;
 
         hp0_axi_m          		: in m_axi_type;
-        hp0_axi_s          		: out  s_axi_type;
+        hp0_axi_s          		: out  s_axi_type
         
-        hp2_axi_m          		: in m_axi_type;
-        hp2_axi_s         		: out  s_axi_type	
+--        hp2_axi_m          		: in m_axi_type;
+--        hp2_axi_s         		: out  s_axi_type	
 		
 		
 	);
@@ -88,10 +88,10 @@ entity zynq_sim_m2 is
         m_axi_gp0_m         	: out  m_axi_type;
 
         hp0_axi_m          		: in m_axi_type;
-        hp0_axi_s          		: out  s_axi_type;
+        hp0_axi_s          		: out  s_axi_type
         
-        hp2_axi_m          		: in m_axi_type;
-        hp2_axi_s         		: out  s_axi_type	
+--        hp2_axi_m          		: in m_axi_type;
+--        hp2_axi_s         		: out  s_axi_type	
 		
 		
 	);
@@ -423,26 +423,26 @@ variable	data	: std_logic_vector( 63 downto 0 );
 
 begin
 	
-	hp2_axi_s.awready <= '0';
-	hp2_axi_s.bresp <= "00";
-	hp2_axi_s.bvalid <= '0'; 
-	hp2_axi_s.wready <= '0';
+	hp0_axi_s.awready <= '0';
+	hp0_axi_s.bresp <= "00";
+	hp0_axi_s.bvalid <= '0'; 
+	hp0_axi_s.wready <= '0';
 	
 		wait for 100 ns;		
 	
 	loop
 		wait until rising_edge( clk );
-		hp2_axi_s.awready <= '1' after 1 ns;
+		hp0_axi_s.awready <= '1' after 1 ns;
 
-		wait until rising_edge( clk ) and hp2_axi_m.awvalid='1';
-		adr:=hp2_axi_m.awaddr;	 
-		hp2_axi_s.awready <= '0' after 1 ns;
+		wait until rising_edge( clk ) and hp0_axi_m.awvalid='1';
+		adr:=hp0_axi_m.awaddr;	 
+		hp0_axi_s.awready <= '0' after 1 ns;
 		index:=conv_integer( adr( 19 downto 2 ));
-		hp2_axi_s.wready <= '1' after 1 ns;
+		hp0_axi_s.wready <= '1' after 1 ns;
 		
 		for ii in 0 to 15 loop
-			wait until rising_edge( clk ) and hp2_axi_m.wvalid='1';
-			data:= hp2_axi_m.wdata;
+			wait until rising_edge( clk ) and hp0_axi_m.wvalid='1';
+			data:= hp0_axi_m.wdata;
 			case( adr( 31 downto 20 ) ) is
 				when x"001" => 
 					bank_0x10(index+1) := conv_integer( data( 63 downto 32 ) );
@@ -462,12 +462,12 @@ begin
 			index:=index+2;
 			
 		end loop;
-		hp2_axi_s.wready <= '0' after 1 ns;
+		hp0_axi_s.wready <= '0' after 1 ns;
 		wait until rising_edge( clk );
 		
-		hp2_axi_s.bvalid <= '1' after 1 ns;
-		wait until rising_edge( clk ) and hp2_axi_m.bready='1';
-		hp2_axi_s.bvalid <= '0' after 1 ns;
+		hp0_axi_s.bvalid <= '1' after 1 ns;
+		wait until rising_edge( clk ) and hp0_axi_m.bready='1';
+		hp0_axi_s.bvalid <= '0' after 1 ns;
 		
 	end loop;
 		
