@@ -45,11 +45,19 @@ entity cl_base_axi_m2 is
 		bl1_data_we					: out std_logic;
 		bl2_data_we					: out std_logic;
 		bl3_data_we					: out std_logic;
+		bl4_data_we					: out std_logic;
+		bl5_data_we					: out std_logic;
+		bl6_data_we					: out std_logic;
+		bl7_data_we					: out std_logic;
 		                        	
 		bl0_data					: in std_logic_vector( 31 downto 0 ):=(others=>'0');
 		bl1_data					: in std_logic_vector( 31 downto 0 ):=(others=>'0');
 		bl2_data					: in std_logic_vector( 31 downto 0 ):=(others=>'0');
 		bl3_data					: in std_logic_vector( 31 downto 0 ):=(others=>'0');
+		bl4_data					: in std_logic_vector( 31 downto 0 ):=(others=>'0');
+		bl5_data					: in std_logic_vector( 31 downto 0 ):=(others=>'0');
+		bl6_data					: in std_logic_vector( 31 downto 0 ):=(others=>'0');
+		bl7_data					: in std_logic_vector( 31 downto 0 ):=(others=>'0');
 		
 		---- Access to user space ----
 		user_reg_adr				: out std_logic_vector( 31 downto 0 );	 --! address        
@@ -117,10 +125,14 @@ user_reg_data_o  <= reg_data_o;
 user_reg_adr <= reg_adr;
 
 reg_data_i <= user_reg_data_i when adr_block_enable='0' else
-			  bl0_data when reg_adr( 8 downto 6 )="000" else
-			  bl1_data when reg_adr( 8 downto 6 )="001" else
-			  bl2_data when reg_adr( 8 downto 6 )="010" else
-			  bl3_data when reg_adr( 8 downto 6 )="011" else
+			  bl0_data when reg_adr( 9 downto 6 )="0000" else
+			  bl1_data when reg_adr( 9 downto 6 )="0001" else
+			  bl2_data when reg_adr( 9 downto 6 )="0010" else
+			  bl3_data when reg_adr( 9 downto 6 )="0011" else
+			  bl4_data when reg_adr( 9 downto 6 )="0100" else
+			  bl5_data when reg_adr( 9 downto 6 )="0101" else
+			  bl6_data when reg_adr( 9 downto 6 )="0110" else
+			  bl7_data when reg_adr( 9 downto 6 )="0111" else
 			  (others=>'0');
 			 
 			 
@@ -130,7 +142,7 @@ bl_host_data <= reg_data_o after 1 ns when rising_edge( clk );
 pr_bl0_data_we: process( clk ) begin
 	if( rising_edge( clk ) ) then
 		
-		if( reg_adr( 24 downto 9 )=x"0000" ) then
+		if( reg_adr( 24 downto 10 )=x"000" & "000" ) then
 			adr_block_enable <= '1' after 1 ns;
 		else
 			adr_block_enable <= '0' after 1 ns;
@@ -140,6 +152,12 @@ pr_bl0_data_we: process( clk ) begin
 		bl1_data_we <= '0' after 1 ns;
 		bl2_data_we <= '0' after 1 ns;
 		bl3_data_we <= '0' after 1 ns;
+		
+		bl4_data_we <= '0' after 1 ns;
+		bl5_data_we <= '0' after 1 ns;
+		bl6_data_we <= '0' after 1 ns;
+		bl7_data_we <= '0' after 1 ns;
+		
 --		if( reg_adr( 8 downto 6 )="000" ) then
 --			bl0_data_we <= reg_data_wr_req and not reg_data_wr_complete after 1 ns;
 --		end if;
@@ -150,7 +168,12 @@ pr_bl0_data_we: process( clk ) begin
 				when "001" =>  bl1_data_we <= reg_data_wr_req and not reg_data_wr_complete after 1 ns;
 				when "010" =>  bl2_data_we <= reg_data_wr_req and not reg_data_wr_complete after 1 ns;
 				when "011" =>  bl3_data_we <= reg_data_wr_req and not reg_data_wr_complete after 1 ns;
-			
+
+				when "100" =>  bl4_data_we <= reg_data_wr_req and not reg_data_wr_complete after 1 ns;
+				when "101" =>  bl5_data_we <= reg_data_wr_req and not reg_data_wr_complete after 1 ns;
+				when "110" =>  bl6_data_we <= reg_data_wr_req and not reg_data_wr_complete after 1 ns;
+				when "111" =>  bl7_data_we <= reg_data_wr_req and not reg_data_wr_complete after 1 ns;
+				
 				when others => null;
 			end case;
 		end if;

@@ -154,7 +154,7 @@ begin
 	fprint(    log, L, "TEST_REGISTER    time: %r\n", fo(now) );
 	
 	
-	data_out:=x"00000D00";
+	data_out:=x"00001D00";
 	block_read( cmd, ret, 0, 0, data_in );
 	
 	if( data_in = data_out ) then

@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --
--- Title       : stend_m2
+-- Title       : stend_m1
 --
 -- Version     : 1.0
 --
@@ -31,15 +31,15 @@ use work.adm_simulation_pkg.all;
 
 
 
-entity stend_m2 is
+entity stend_m1 is
 	generic(
 	 	test_id             : in integer:=-1;       	-- идентификатор теста
-        stend_name          : in string:="stend_m2";     -- имя стенда
+        stend_name          : in string:="stend_m1";     -- имя стенда
         test_log            : in string:="../../../../src/testbench/log/"    -- путь к файлу отчёта
     );
-end stend_m2;
+end stend_m1;
 
-architecture Behavioral of stend_m2 is
+architecture Behavioral of stend_m1 is
 	
 constant	fname_test_id	        : string:= test_log & "test_id.txt";
 constant    path                    : string:= test_log;

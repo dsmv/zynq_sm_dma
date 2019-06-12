@@ -70,6 +70,7 @@ end top;
 architecture top of top is		
 
 
+constant	BLOCK_CNT				: std_logic_vector( 15 downto 0 ):=x"0008";  --! count of block in address space
 
 
 signal	clk		    					: std_logic;    
@@ -92,7 +93,30 @@ signal	user_reg_data_wr_complete		: std_logic;
 signal	user_reg_data_rd_req			: std_logic;	
 signal	user_reg_data_rd_complete		: std_logic;
 
+
+signal	reset_main_n					: std_logic;
+
 signal	user_reset_n					: std_logic;
+
+signal	bl_adr							: std_logic_vector( 7 downto 0 );
+signal	bl_host_data					: std_logic_vector( 31 downto 0 );
+signal	bl0_data_we						: std_logic;
+signal	bl1_data_we						: std_logic;
+signal	bl2_data_we						: std_logic;
+signal	bl3_data_we						: std_logic;
+signal	bl4_data_we						: std_logic;
+signal	bl5_data_we						: std_logic;
+signal	bl6_data_we						: std_logic;
+signal	bl7_data_we						: std_logic;
+signal	bl0_data						: std_logic_vector( 31 downto 0 ):=(others=>'0');
+signal	bl1_data						: std_logic_vector( 31 downto 0 ):=(others=>'0');
+signal	bl2_data						: std_logic_vector( 31 downto 0 ):=(others=>'0');
+signal	bl3_data						: std_logic_vector( 31 downto 0 ):=(others=>'0');
+signal	bl4_data						: std_logic_vector( 31 downto 0 ):=(others=>'0');
+signal	bl5_data						: std_logic_vector( 31 downto 0 ):=(others=>'0');
+signal	bl6_data						: std_logic_vector( 31 downto 0 ):=(others=>'0');
+signal	bl7_data						: std_logic_vector( 31 downto 0 ):=(others=>'0');		
+
 
 
 begin					
@@ -141,13 +165,6 @@ zynq: zynq_system
 );							 
 
 host: entity work.sm_dma 
-	generic map(
-		Device_ID					=> Device_ID, 	-- ID of HW
-		Revision					=> Revision, 	-- revision of HW
-		PLD_ID						=> PLD_ID, 		-- ID of FPGA
-		PLD_VER						=> PLD_VER, 	-- version of FPGA
-		PLD_BUILD					=> PLD_BUILD 	-- build of FPGA
-	)
 	port map(
 	
 		clk							=> clk,		
@@ -157,7 +174,28 @@ host: entity work.sm_dma
 		s00_axi_s					=> gp0_axi_s,	
 		                        	
 		reset_o						=> user_reset_n,
-
+		
+		bl_adr						=> bl_adr,
+		bl_host_data				=> bl_host_data,
+		
+		bl0_data_we					=> bl0_data_we,
+		bl1_data_we					=> bl1_data_we,
+		bl2_data_we					=> bl2_data_we,
+		bl3_data_we					=> bl3_data_we,
+		bl4_data_we					=> bl4_data_we,
+		bl5_data_we					=> bl5_data_we,
+		bl6_data_we					=> bl6_data_we,
+		bl7_data_we					=> bl7_data_we,
+		
+		bl0_data					=> bl0_data,
+		bl1_data					=> bl1_data,
+		bl2_data					=> bl2_data,
+		bl3_data					=> bl3_data,
+		bl4_data					=> bl4_data,
+		bl5_data					=> bl5_data,
+		bl6_data					=> bl6_data,
+		bl7_data					=> bl7_data,
+		
 		---- Access to user space ----
 		user_reg_adr				=> user_reg_adr,
 		user_reg_data_o				=> user_reg_data_o,
@@ -167,6 +205,35 @@ host: entity work.sm_dma
 		user_reg_data_rd_req		=> user_reg_data_rd_req,
 		user_reg_data_rd_complete	=> user_reg_data_rd_complete
 	);
-		  
+	
+	
+main: entity work.sm_dma_main 
+	generic map(
+		Device_ID					=> Device_ID, 	
+		Revision					=> Revision, 	
+		PLD_ID						=> PLD_ID, 		
+		PLD_VER						=> PLD_VER, 	
+		PLD_BUILD					=> PLD_BUILD, 	
+		BLOCK_CNT					=> BLOCK_CNT 	
+	)	
+	port map(
+	
+		---- Global ----
+		reset_i						=> reset_main_n,	
+		clk							=> clk,				
+		reset_o						=> user_reset_n,	
+		
+		---- HOST ----
+		bl_adr						=> bl_adr( 4 downto 0 ),
+		bl_data_in					=> bl_host_data,		
+		bl_data_out					=> bl0_data,			
+		bl_data_we					=> bl0_data_we			
+		
+		---- ”правление ----
+--		brd_mode0		: out std_logic_vector( 15 downto 0 );  --! BRD_MODE0 register
+--		brd_mode1		: out std_logic_vector( 15 downto 0 );  --! BRD_MODE1 register
+--		brd_status		: in  std_logic_vector( 15 downto 0 ):=(others=>'0')
+		
+	);	
 	
 end top;
